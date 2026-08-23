@@ -25,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.krithi.frauddetector.ui.components.FeatureCard
-import com.krithi.frauddetector.ui.components.StatsCard
 import com.krithi.frauddetector.ui.components.StatusCard
 
 @Composable
@@ -78,9 +77,6 @@ fun HomeScreen(
 
         // Security Status
         StatusCard()
-
-        // Statistics
-        StatsCard()
 
         Text(
             text = "Security Tools",
