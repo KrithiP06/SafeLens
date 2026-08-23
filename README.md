@@ -118,7 +118,7 @@ SafeLens follows a simple layered architecture:
 
 ---
 
-##🧪 Testing
+## 🧪 Testing
 
 SafeLens has been tested across its major features, including:
 
@@ -140,7 +140,7 @@ SafeLens has been tested across its major features, including:
 
 ---
 
-##🔮 Future Improvements
+## 🔮 Future Improvements
 
 -Real-time phone number reputation checking
 -Machine-learning based SMS classification
@@ -155,7 +155,7 @@ SafeLens has been tested across its major features, including:
 
 ---
 
-##⚠️ Disclaimer
+## ⚠️ Disclaimer
 
 SafeLens is an educational and preventive security application.
 
@@ -165,7 +165,7 @@ Security detection systems can produce both false positives and false negatives.
 
 ---
 
-##👩‍💻 Author
+## 👩‍💻 Author
 
 Krithi Prakash
 
@@ -173,6 +173,6 @@ Computer Science & Engineering Student
 
 ---
 
-##📄 License
+## 📄 License
 
 This project is created for educational and portfolio purposes.
