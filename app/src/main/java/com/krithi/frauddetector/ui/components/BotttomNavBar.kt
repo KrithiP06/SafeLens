@@ -27,9 +27,19 @@ fun BottomNavBar(
 
         NavigationBarItem(
             selected = currentRoute == "home",
-            onClick = { navController.navigate("home") },
+            onClick = {
+                navController.navigate("home") {
+                    popUpTo("home") {
+                        inclusive = false
+                    }
+                    launchSingleTop = true
+                }
+            },
             icon = {
-                Icon(Icons.Default.Home, null)
+                Icon(
+                    imageVector = Icons.Default.Home,
+                    contentDescription = "Home"
+                )
             },
             label = {
                 Text("Home")
@@ -38,9 +48,19 @@ fun BottomNavBar(
 
         NavigationBarItem(
             selected = currentRoute == "history",
-            onClick = { navController.navigate("history") },
+            onClick = {
+                navController.navigate("history") {
+                    popUpTo("home") {
+                        inclusive = false
+                    }
+                    launchSingleTop = true
+                }
+            },
             icon = {
-                Icon(Icons.Default.History, null)
+                Icon(
+                    imageVector = Icons.Default.History,
+                    contentDescription = "History"
+                )
             },
             label = {
                 Text("History")
@@ -49,9 +69,19 @@ fun BottomNavBar(
 
         NavigationBarItem(
             selected = currentRoute == "settings",
-            onClick = { navController.navigate("settings") },
+            onClick = {
+                navController.navigate("settings") {
+                    popUpTo("home") {
+                        inclusive = false
+                    }
+                    launchSingleTop = true
+                }
+            },
             icon = {
-                Icon(Icons.Default.Settings, null)
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = "Settings"
+                )
             },
             label = {
                 Text("Settings")
