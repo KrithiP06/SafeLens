@@ -1,20 +1,37 @@
 package com.krithi.frauddetector.ui.screens
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Security
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.krithi.frauddetector.ui.components.ScreenHeader
@@ -27,20 +44,83 @@ fun PhoneNumberScreen(
     navController: NavController,
     scanViewModel: ScanViewModel
 ) {
-
     var phoneNumber by remember { mutableStateOf("") }
     var result by remember { mutableStateOf("") }
     var isScanning by remember { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
 
+    val isDarkMode = MaterialTheme.colorScheme.background == Color(0xFF080B14)
+
+    // Theme-aware colors
+    val backgroundColor = if (isDarkMode) {
+        Color(0xFF080B14)
+    } else {
+        MaterialTheme.colorScheme.background
+    }
+
+    val glassColor = if (isDarkMode) {
+        Color(0xFF151A2A).copy(alpha = 0.88f)
+    } else {
+        MaterialTheme.colorScheme.surface
+    }
+
+    val glassBorder = if (isDarkMode) {
+        Color(0xFF343B55).copy(alpha = 0.75f)
+    } else {
+        MaterialTheme.colorScheme.outline.copy(alpha = 0.35f)
+    }
+
+    val primaryText = if (isDarkMode) {
+        Color.White
+    } else {
+        MaterialTheme.colorScheme.onSurface
+    }
+
+    val secondaryText = if (isDarkMode) {
+        Color(0xFF9EA6BD)
+    } else {
+        MaterialTheme.colorScheme.onSurfaceVariant
+    }
+
+    val mutedText = if (isDarkMode) {
+        Color(0xFF777F98)
+    } else {
+        MaterialTheme.colorScheme.onSurfaceVariant
+    }
+
+    val glassInnerColor = if (isDarkMode) {
+        Color(0xFF0D111D).copy(alpha = 0.78f)
+    } else {
+        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f)
+    }
+
+    val glassInnerBorder = if (isDarkMode) {
+        Color(0xFF30364D)
+    } else {
+        MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+    }
+
+    val purpleAccent = Color(0xFF8B7CFF)
+    val greenAccent = Color(0xFF52D9A0)
+    val yellowAccent = Color(0xFFFFC857)
+    val redAccent = Color(0xFFFF5C68)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .background(backgroundColor)
+            .verticalScroll(rememberScrollState())
+            .padding(
+                start = 20.dp,
+                top = 20.dp,
+                end = 20.dp,
+                bottom = 32.dp
+            ),
+        verticalArrangement = Arrangement.spacedBy(18.dp)
     ) {
 
+        // Header
         ScreenHeader(
             title = "Check Phone Number",
             onBack = {
@@ -49,27 +129,128 @@ fun PhoneNumberScreen(
         )
 
         Text(
-            text = "Check a phone number for suspicious patterns.",
-            style = MaterialTheme.typography.bodyMedium
+            text = "Analyze a phone number for suspicious patterns.",
+            style = MaterialTheme.typography.bodyLarge,
+            color = secondaryText
         )
 
-        OutlinedTextField(
-            value = phoneNumber,
-            onValueChange = {
-                phoneNumber = it.filter { character ->
-                    character.isDigit() || character == '+'
+        // Security status card
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = glassColor
+            ),
+            border = BorderStroke(
+                1.dp,
+                glassBorder
+            )
+        ) {
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Icon(
+                    imageVector = Icons.Default.Security,
+                    contentDescription = null,
+                    tint = purpleAccent
+                )
+
+                Spacer(
+                    modifier = Modifier.padding(horizontal = 6.dp)
+                )
+
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+
+                    Text(
+                        text = "SafeLens Phone Analysis",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = primaryText
+                    )
+
+                    Spacer(
+                        modifier = Modifier.height(2.dp)
+                    )
+
+                    Text(
+                        text = "Local suspicious-pattern detection enabled",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = mutedText
+                    )
                 }
-            },
-            label = {
-                Text("Enter Phone Number")
-            },
-            placeholder = {
-                Text("+91 9876543210")
-            },
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth()
-        )
 
+                Icon(
+                    imageVector = Icons.Default.CheckCircle,
+                    contentDescription = null,
+                    tint = greenAccent
+                )
+            }
+        }
+
+        // Input section
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = glassColor
+            ),
+            border = BorderStroke(
+                1.dp,
+                glassBorder
+            )
+        ) {
+
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+
+                Text(
+                    text = "PHONE NUMBER",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = mutedText
+                )
+
+                OutlinedTextField(
+                    value = phoneNumber,
+                    onValueChange = {
+                        phoneNumber = it.filter { character ->
+                            character.isDigit() || character == '+'
+                        }
+                    },
+                    label = {
+                        Text("Enter Phone Number")
+                    },
+                    placeholder = {
+                        Text("+91 9876543210")
+                    },
+                    singleLine = true,
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Call,
+                            contentDescription = null,
+                            tint = purpleAccent
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp)
+                )
+
+                Text(
+                    text = "Indian mobile numbers only",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = mutedText
+                )
+            }
+        }
+
+        // Scan button
         Button(
             enabled = !isScanning && phoneNumber.isNotBlank(),
             onClick = {
@@ -90,7 +271,10 @@ fun PhoneNumberScreen(
                     val isValidIndianNumber =
                         cleanedNumber.length == 10 &&
                                 cleanedNumber.firstOrNull() in listOf(
-                            '6', '7', '8', '9'
+                            '6',
+                            '7',
+                            '8',
+                            '9'
                         )
 
                     val repeatedPattern =
@@ -129,38 +313,105 @@ fun PhoneNumberScreen(
                     isScanning = false
                 }
             },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                if (isScanning) "Scanning..."
-                else "📞 Check Number"
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            shape = RoundedCornerShape(18.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF7567F8),
+                contentColor = Color.White
             )
-        }
+        ) {
 
-        if (isScanning) {
+            if (isScanning) {
 
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                CircularProgressIndicator(
+                    modifier = Modifier.height(22.dp),
+                    color = Color.White,
+                    strokeWidth = 2.dp
                 )
-            ) {
+
+                Spacer(
+                    modifier = Modifier.padding(horizontal = 6.dp)
+                )
 
                 Text(
-                    text = "🔍 Analyzing phone number...",
-                    modifier = Modifier.padding(16.dp),
-                    style = MaterialTheme.typography.bodyLarge
+                    text = "Analyzing..."
+                )
+
+            } else {
+
+                Text(
+                    text = "📞  Analyze Number",
+                    style = MaterialTheme.typography.titleMedium
                 )
             }
         }
 
+        // Scanning state
+        if (isScanning) {
+
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(18.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = if (isDarkMode) {
+                        Color(0xFF151A2A).copy(alpha = 0.78f)
+                    } else {
+                        MaterialTheme.colorScheme.surfaceVariant
+                    }
+                ),
+                border = BorderStroke(
+                    1.dp,
+                    purpleAccent.copy(alpha = 0.45f)
+                )
+            ) {
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    CircularProgressIndicator(
+                        modifier = Modifier.height(22.dp),
+                        color = purpleAccent,
+                        strokeWidth = 2.dp
+                    )
+
+                    Spacer(
+                        modifier = Modifier.padding(horizontal = 8.dp)
+                    )
+
+                    Column {
+
+                        Text(
+                            text = "Analyzing Phone Number",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = primaryText
+                        )
+
+                        Text(
+                            text = "Checking suspicious patterns...",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = secondaryText
+                        )
+                    }
+                }
+            }
+        }
+
+        // Result
         if (result.isNotEmpty()) {
 
             val isDangerous = result.contains("🚨")
             val isWarning = result.contains("⚠️")
+            val isInvalid = result.contains("valid")
 
             val resultTitle = when {
-                result.contains("valid") ->
+
+                isInvalid ->
                     "Invalid Number"
 
                 isDangerous ->
@@ -170,70 +421,154 @@ fun PhoneNumberScreen(
                     "Suspicious Pattern"
 
                 else ->
-                    "Number Format Looks Safe"
+                    "Number Looks Safe"
             }
 
             val resultDescription = when {
-                result.contains("valid") ->
+
+                isInvalid ->
                     "Please enter a valid 10-digit Indian mobile number."
 
                 isDangerous ->
                     "This number matches a known spam number in the current local database."
 
                 isWarning ->
-                    "This number has a pattern that may be suspicious."
+                    "This number contains a repeated pattern that may be suspicious."
 
                 else ->
                     "The number has a valid Indian mobile format and no suspicious pattern was detected."
             }
 
+            val accentColor = when {
+
+                isInvalid ->
+                    yellowAccent
+
+                isDangerous ->
+                    redAccent
+
+                isWarning ->
+                    yellowAccent
+
+                else ->
+                    greenAccent
+            }
+
+            val resultIcon = when {
+
+                isInvalid ->
+                    Icons.Default.Warning
+
+                isDangerous ->
+                    Icons.Default.Warning
+
+                isWarning ->
+                    Icons.Default.Warning
+
+                else ->
+                    Icons.Default.CheckCircle
+            }
+
             Card(
                 modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(22.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = when {
-                        isDangerous ->
-                            MaterialTheme.colorScheme.errorContainer
-
-                        isWarning ->
-                            MaterialTheme.colorScheme.tertiaryContainer
-
-                        else ->
-                            MaterialTheme.colorScheme.primaryContainer
-                    }
+                    containerColor = glassColor
+                ),
+                border = BorderStroke(
+                    1.dp,
+                    accentColor.copy(alpha = 0.55f)
                 )
             ) {
 
                 Column(
-                    modifier = Modifier.padding(20.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    modifier = Modifier.padding(18.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
 
-                    Text(
-                        text = when {
-                            isDangerous -> "🚨"
-                            isWarning -> "⚠️"
-                            else -> "✅"
-                        },
-                        style = MaterialTheme.typography.headlineMedium
-                    )
+                    // Result heading
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
 
-                    Text(
-                        text = resultTitle,
-                        style = MaterialTheme.typography.titleLarge
-                    )
+                        Icon(
+                            imageVector = resultIcon,
+                            contentDescription = null,
+                            tint = accentColor
+                        )
 
+                        Spacer(
+                            modifier = Modifier.padding(horizontal = 6.dp)
+                        )
+
+                        Text(
+                            text = resultTitle,
+                            style = MaterialTheme.typography.titleLarge,
+                            color = primaryText
+                        )
+                    }
+
+                    // Description
                     Text(
                         text = resultDescription,
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = secondaryText
                     )
 
-                    Spacer(
-                        modifier = Modifier.height(4.dp)
-                    )
+                    // Scanned number glass card
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(14.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = glassInnerColor
+                        ),
+                        border = BorderStroke(
+                            1.dp,
+                            glassInnerBorder
+                        )
+                    ) {
 
+                        Column(
+                            modifier = Modifier.padding(14.dp)
+                        ) {
+
+                            Text(
+                                text = "SCANNED NUMBER",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = mutedText
+                            )
+
+                            Spacer(
+                                modifier = Modifier.height(5.dp)
+                            )
+
+                            Text(
+                                text = phoneNumber,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = primaryText
+                            )
+                        }
+                    }
+
+                    // Recommendation
                     Text(
-                        text = phoneNumber,
-                        style = MaterialTheme.typography.bodySmall
+                        text = when {
+
+                            isDangerous ->
+                                "⚠ Do not trust or interact with this number."
+
+                            isWarning ->
+                                "⚠ Exercise caution when receiving calls from this number."
+
+                            isInvalid ->
+                                "⚠ Check the number and try again."
+
+                            else ->
+                                "✓ No suspicious patterns were detected."
+                        },
+                        style = MaterialTheme.typography.bodySmall,
+                        color = accentColor
                     )
                 }
             }

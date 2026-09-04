@@ -37,7 +37,8 @@ fun AppNavigation(
 
             composable("home") {
                 HomeScreen(
-                    navController = navController
+                    navController = navController,
+                    darkMode = darkMode
                 )
             }
 
